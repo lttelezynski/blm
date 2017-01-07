@@ -126,22 +126,44 @@ y
 #' Gets confidence intervals for coefficients from a fitted model.
 #'
 #' @param obj   A blm object.
+#' @param parm   Parameters for which CI has to be calculated.
 #' @param level   A parameter with CI level (0.95 for 95\% CI).
 #'
 #' @return A 2 rows matrix with confidence intervals.
 #' @export
-confint <- function(obj, level){
+confint <- function(obj, parm, level=0.95){
+  if(level>1){
+    warning("Confidence interval cannot be greater than 1.")
+    return()
+  }
+  if(level<0){
+    warning("Confidence interval cannot be smaller than 0.")
+    return()
+  }
+
     int <- c((1-level)/2, 1-(1-level)/2)
-    n <- nrow(fit1$coef)
-    r<-matrix(nrow=2, ncol = n)
-    for(i in seq_along(obj$coef)){
-      r[1,i]<-stats::qnorm(int[1], obj$coef[i,1], obj$var[i,i])
-      r[2,i]<-stats::qnorm(int[2], obj$coef[i,1], obj$var[i,i])
+    if(missing(parm)){
+      n <- nrow(fit1$coef)
+      r<-matrix(nrow=n, ncol = 2)
+      for(i in seq_along(obj$coef)){
+        r[i,1]<-stats::qnorm(int[1], obj$coef[i,1], obj$var[i,i])
+        r[i,2]<-stats::qnorm(int[2], obj$coef[i,1], obj$var[i,i])
+      }
+      rownames(r) <- rownames(obj$coef)
+      colnames(r) <- c(paste((0.5-(level/2))*100, "%"), paste((0.5+(level/2))*100, "%"))
+    }
+    else{
+      n <- length(parm)
+      r<-matrix(nrow=n, ncol = 2)
+      for(i in seq_along(parm)){
+        r[i,1]<-stats::qnorm(int[1], obj$coef[parm[i],1], obj$var[parm[i],parm[i]])
+        r[i,2]<-stats::qnorm(int[2], obj$coef[parm[i],1], obj$var[parm[i],parm[i]])
+      }
+      rownames(r) <- parm
+      colnames(r) <- c(paste((0.5-(level/2))*100, "%"), paste((0.5+(level/2))*100, "%"))
     }
     return(r)
 }
-
-confint(fit1, level=0.5)
 
 #' Get fitted response.
 #'
@@ -155,6 +177,7 @@ fitted <- function(obj){
   return(predict(obj))
 }
 
+
 fitted(fit1)
 
 #' Get residuals.
@@ -166,7 +189,7 @@ fitted(fit1)
 #' @return A vector with residuals.
 #' @export
 residuals <- function(obj){
-  return(fitted(obj)-obj$data[,1])
+  return(obj$data[,1]-fitted(obj))
 }
 
 residuals(fit1)

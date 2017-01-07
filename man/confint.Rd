@@ -4,10 +4,12 @@
 \alias{confint}
 \title{Get confidence intervals.}
 \usage{
-confint(obj, level)
+confint(obj, parm, level = 0.95)
 }
 \arguments{
 \item{obj}{A blm object.}
+
+\item{parm}{Parameters for which CI has to be calculated.}
 
 \item{level}{A parameter with CI level (0.95 for 95\% CI).}
 }
