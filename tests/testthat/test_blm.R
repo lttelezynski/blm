@@ -90,6 +90,14 @@ test_that("testing confint", {
   lmRes <- stats::confint(lmFit)
   expect_equal(colnames(blmRes), colnames(lmRes))
   expect_equal(rownames(blmRes), rownames(lmRes))
+  expect_warning(confint(fit1,level=2))
+  expect_warning(confint(fit1,level=-1))
+
+  blmRes <- confint(fit1, "x")
+  lmRes <- stats::confint(lmFit,"x")
+  expect_equal(colnames(blmRes), colnames(lmRes))
+  expect_equal(rownames(blmRes), rownames(lmRes))
+
 
 })
 

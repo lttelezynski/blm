@@ -30,7 +30,7 @@ blm <- function(model, alpha, beta, ...) {
 
 distribution <- function(x) UseMethod("distribution")
 distribution.default <- function(x) x
-distribution.blm <- function(x) x$posterior
+#distribution.blm <- function(x) x$posterior
 
 
 #' Update prior to posterior distribution.
@@ -105,8 +105,8 @@ cof
 #' @return A vector with predicted response.
 #' @export
 predict <- function(obj, ...){
-  mxy <- obj$posterior$mu
-  Sxy <- obj$posterior$Sigma
+  mxy <- posterior(obj)$mu
+  Sxy <- posterior(obj)$Sigma
   noResFor <- stats::delete.response(stats::terms(obj$formula))
   mf <- stats::model.frame(noResFor, ...)
   phiX <- stats::model.matrix(noResFor, ...)
