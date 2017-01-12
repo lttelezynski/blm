@@ -111,3 +111,23 @@ test_that("testing predict", {
   expect_equal(y, blmRes, tolerance=0.1)
 
 })
+
+test_that("testing print", {
+  x <- stats::rnorm(1000, 10, 1)
+  y<- stats::rnorm(1000, x, 1)
+
+  fit1<-blm(y~x,1,1)
+
+  expect_warning(print(fit1), regexp = NA)
+
+})
+
+test_that("testing summary", {
+  x <- stats::rnorm(1000, 10, 1)
+  y<- stats::rnorm(1000, x, 1)
+
+  fit1<-blm(y~x,1,1)
+
+  expect_warning(summary(fit1), regexp = NA)
+
+})

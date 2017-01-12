@@ -23,8 +23,9 @@ blm <- function(model, alpha, beta, ...) {
                  var=posterior$Sigma,
                  prior=prior,
                  posterior=posterior,
-                 class="blm"
-                 ))
+                 functionCall=sys.call()
+                 ),
+                 class="blm")
 }
 
 
@@ -229,4 +230,98 @@ graphics::abline(obj$coef[1],obj$coef[2], col="red")
 }
 
 plot(fit1)
+
+#' Print blm object.
+#'
+#' Prints function call and coefficients of blm object.
+#'
+#' @param obj   A blm object.
+#'
+#' @return Function call and coefficients.
+#' @export
+print.blm <- function(obj){
+  cat("\nCall:\n")
+  print(obj$functionCall)
+  cat("\nCoefficients:\n")
+  print(coefficients(obj))
+}
+
+x <- stats::rnorm(1000, 10, 1)
+y<- stats::rnorm(1000, x, 1)
+fit1<-blm(y~x,1,1)
+lmFit<-lm(y~x)
+
+print(fit1)
+print(lmFit)
+
+
+#' Print blm object.
+#'
+#' Prints function call and coefficients of blm object.
+#'
+#' @param obj   A blm object.
+#'
+#' @return Function call and coefficients.
+#' @export
+summary.blm <- function(obj){
+  cat("\nCall:\n")
+  print(obj$functionCall)
+  cat("\nResiduals:\n")
+  q<- quantile(residuals(obj))
+  names(q)<- c("Min", "1Q", "Median", "3Q", "Max")
+  print(q)
+
+  cat("\nCoefficients:\n")
+  cof <-cbind(fit1$coef, confint(fit1))
+  colnames(cof)<-c("Estimate", "Low 95% CI", "Upp 95% CI")
+  print(cof)
+
+  Rsq <- 1-(sum(residuals(obj)^2)/(sum((obj$data[,1]-mean(obj$data[,1]))^2)))
+  n=length(fit1$data[,1])
+  p=length(fit1$data)-1
+  df=n-1-p
+  RSE <- sqrt(deviance(obj)/df)
+  cat("\nResidual standard error:", RSE, "on", df, "degrees of freedom")
+  AdjRsq <- 1-(sum(residuals(obj)^2)/(n-p-1)/(sum((obj$data[,1]-mean(obj$data[,1]))^2)/(n-1)))
+  cat("\nR-squared:", Rsq, ",\tAdjusted R-squared: ", AdjRsq)
+
+  MSM<-sum((fitted(obj)-mean(obj$data[,1]))^2)/p
+  MSE<-sum(residuals(obj)^2)/df
+  Fstat <- MSM/MSE
+  pval <- pf(q=MSM/MSE, df1=p, df2=df,lower.tail = FALSE)
+  cat("\nF-statistic:", Fstat, "on", p, "and", df, "DF, p-value: ", pval)
+
+
+
+}
+summary(lmFit)
+q<- quantile(residuals.lm(lmFit))
+names(q)<- c("Min", "1Q", "Median", "3Q", "Max")
+q
+
+
+cof <-cbind(fit1$coef, confint(fit1))
+colnames(cof)<-c("Estimate", "Low 95% CI", "Upp 95% CI")
+
+names(stats::coefficients(lmFit))[1]
+stats::coefficients(lmFit)[1]
+names(stats::coefficients(lmFit))[2]
+stats::coefficients(lmFit)[2]
+?stderr()
+coefficients(fit1)
+
+n=length(fit1$data[,1])
+p=length(fit1$data)-1
+1-(sum(stats::residuals(lmFit)^2)/(n-p-1)/(sum((fit1$data[,1]-mean(fit1$data[,1]))^2)/(n-1)))
+
+summary(fit1)
+
+sqrt(stats::deviance(lmFit)/100)
+
+MSM<-sum((stats::fitted(lmFit)-mean(fit1$data[,1]))^2)
+MSE<-sum(stats::residuals(lmFit)^2)/998
+MSM/MSE
+pf(q=MSM/MSE, df1=1, df2=998,lower.tail = FALSE)
+
+
 
