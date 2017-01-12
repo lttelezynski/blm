@@ -4,10 +4,12 @@
 \alias{print.blm}
 \title{Print blm object.}
 \usage{
-\method{print}{blm}(obj)
+\method{print}{blm}(x, ...)
 }
 \arguments{
-\item{obj}{A blm object.}
+\item{x}{A blm object.}
+
+\item{...}{Additional parameters.}
 }
 \value{
 Function call and coefficients.

@@ -2,17 +2,19 @@
 % Please edit documentation in R/blm.R
 \name{summary.blm}
 \alias{summary.blm}
-\title{Print blm object.}
+\title{Summary of blm object.}
 \usage{
-\method{summary}{blm}(obj)
+\method{summary}{blm}(object, ...)
 }
 \arguments{
-\item{obj}{A blm object.}
+\item{object}{A blm object.}
+
+\item{...}{Additional parameters.}
 }
 \value{
 Function call and coefficients.
 }
 \description{
-Prints function call and coefficients of blm object.
+Prints summary of blm object.
 }
 

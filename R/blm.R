@@ -235,15 +235,16 @@ plot(fit1)
 #'
 #' Prints function call and coefficients of blm object.
 #'
-#' @param obj   A blm object.
+#' @param x   A blm object.
+#' @param ...   Additional parameters.
 #'
 #' @return Function call and coefficients.
 #' @export
-print.blm <- function(obj){
+print.blm <- function(x, ...){
   cat("\nCall:\n")
-  print(obj$functionCall)
+  print(x$functionCall)
   cat("\nCoefficients:\n")
-  print(coefficients(obj))
+  print(coefficients(x))
 }
 
 x <- stats::rnorm(1000, 10, 1)
@@ -255,47 +256,48 @@ print(fit1)
 print(lmFit)
 
 
-#' Print blm object.
+#' Summary of blm object.
 #'
-#' Prints function call and coefficients of blm object.
+#' Prints summary of blm object.
 #'
-#' @param obj   A blm object.
+#' @param object   A blm object.
+#' @param ...   Additional parameters.
 #'
 #' @return Function call and coefficients.
 #' @export
-summary.blm <- function(obj){
+summary.blm <- function(object, ...){
   cat("\nCall:\n")
-  print(obj$functionCall)
+  print(object$functionCall)
   cat("\nResiduals:\n")
-  q<- quantile(residuals(obj))
+  q<- stats::quantile(residuals(object))
   names(q)<- c("Min", "1Q", "Median", "3Q", "Max")
   print(q)
 
   cat("\nCoefficients:\n")
-  cof <-cbind(fit1$coef, confint(fit1))
+  cof <-cbind(object$coef, confint(object))
   colnames(cof)<-c("Estimate", "Low 95% CI", "Upp 95% CI")
   print(cof)
 
-  Rsq <- 1-(sum(residuals(obj)^2)/(sum((obj$data[,1]-mean(obj$data[,1]))^2)))
-  n=length(fit1$data[,1])
-  p=length(fit1$data)-1
+  Rsq <- 1-(sum(residuals(object)^2)/(sum((object$data[,1]-mean(object$data[,1]))^2)))
+  n=length(object$data[,1])
+  p=length(object$data)-1
   df=n-1-p
-  RSE <- sqrt(deviance(obj)/df)
+  RSE <- sqrt(deviance(object)/df)
   cat("\nResidual standard error:", RSE, "on", df, "degrees of freedom")
-  AdjRsq <- 1-(sum(residuals(obj)^2)/(n-p-1)/(sum((obj$data[,1]-mean(obj$data[,1]))^2)/(n-1)))
+  AdjRsq <- 1-(sum(residuals(object)^2)/(n-p-1)/(sum((object$data[,1]-mean(object$data[,1]))^2)/(n-1)))
   cat("\nR-squared:", Rsq, ",\tAdjusted R-squared: ", AdjRsq)
 
-  MSM<-sum((fitted(obj)-mean(obj$data[,1]))^2)/p
-  MSE<-sum(residuals(obj)^2)/df
+  MSM<-sum((fitted(object)-mean(object$data[,1]))^2)/p
+  MSE<-sum(residuals(object)^2)/df
   Fstat <- MSM/MSE
-  pval <- pf(q=MSM/MSE, df1=p, df2=df,lower.tail = FALSE)
+  pval <- stats::pf(q=MSM/MSE, df1=p, df2=df,lower.tail = FALSE)
   cat("\nF-statistic:", Fstat, "on", p, "and", df, "DF, p-value: ", pval)
 
 
 
 }
 summary(lmFit)
-q<- quantile(residuals.lm(lmFit))
+q<- stats::quantile(residuals.lm(lmFit))
 names(q)<- c("Min", "1Q", "Median", "3Q", "Max")
 q
 
@@ -321,7 +323,7 @@ sqrt(stats::deviance(lmFit)/100)
 MSM<-sum((stats::fitted(lmFit)-mean(fit1$data[,1]))^2)
 MSE<-sum(stats::residuals(lmFit)^2)/998
 MSM/MSE
-pf(q=MSM/MSE, df1=1, df2=998,lower.tail = FALSE)
+stats::pf(q=MSM/MSE, df1=1, df2=998,lower.tail = FALSE)
 
 
 
