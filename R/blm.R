@@ -191,7 +191,7 @@ fitted <- function(obj){
 #'
 #' @param obj   A blm object.
 #'
-#' @return A vector x <- stats::rnorm(10, 10, 1)
+#' @return A vector with residuals.
 #' @export
 residuals <- function(obj){
   return(obj$data[,1]-fitted(obj))

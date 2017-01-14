@@ -2,9 +2,8 @@
 title: "Bayesian linear regression"
 author: "Lukasz Telezynski"
 date: "`r Sys.Date()`"
-output:
-  md_document:
-    variant: markdown_github
+output: github_document
+
 ---
 
 ```{r setup, include=FALSE}
@@ -13,13 +12,84 @@ knitr::opts_chunk$set(echo = TRUE)
 #blm package
 
 ##Description
-blm is a R package that can be used to fit bayesian linear models.
+blm is a R package that can be used to fit bayesian linear models. It creates blm objects and is very similar to lm().
+
+##Usage example
+First blm package needs to be loaded into R.
+```{r message=FALSE}
+library(blm)
+```
+
+We need some data so we generate a dataset with 2 variables x and y.
+```{r }
+x <- stats::rnorm(100, 10, 1)
+y<- stats::rnorm(100, x, 1)
+fit<-blm(y~x,1,1)
+```
+
+Finally, we can create blm object which fits linear model to our data with one explanatory variable x and response y.
+```{r }
+fit<-blm(y~x,1,1)
+```
+
+Now we can print some information about our fitted model,
+```{r }
+summary(fit)
+```
+
+
+or plot some data
+```{r }
+plot(fit)
+```
 
 ##Installation
 Since blm package is available only through github, devtools package can be used to install it.
 
-1. Installing devtools package
-```{r eval=FALSE}
-install.packages("devtools")
-library(devtools)
-```
+1. Install and load devtools package (ommit installation if already installed)
+    ```{r eval=FALSE}
+    install.packages("devtools")
+    library(devtools)
+    ```
+
+2. Install blm package using devtools
+    ```{r eval=FALSE}
+    install_github("lttelezynski/blm")
+    ```
+  
+##Functions
+1. blm()
+  Constructor creating object of class blm with a fitted model. Requires data and formula in format response~explanatory.
+
+2. coefficients()
+  Given blm object as an argument, returns its coefficients.
+  
+3. confint()
+  Given blm object as an argument, returns confidence intervals of coefficients.
+  
+4. deviance()
+  Given blm object as an argument, returns sum of squared distances between observed and predicted response variables.
+
+5. fitted()
+  Given blm object as an argument, returns its fitted values.
+
+6. plot()
+  Given blm object as an argument, plots data and regression line for datasets with only one explanatory variable.
+
+7. predict()
+  Given blm object as an argument, returns predictions of response variable. New data can be passed through ... argument.
+  
+8. print()
+  Given blm object as an argument, prints out function call and coefficients.
+  
+9. residuals()
+  Given blm object as an argument, returns residuals - differences between observed and fitted values of response variable.
+
+10. summary()
+  Given blm object as an argument, returns summary about fitted model.
+  * Function call
+  * Residuals (Min, 1Q, Median, 3Q, Max)
+  * Coefficients (Estimate with 95% confidence intervals)
+  * Residual standard error
+  * R² and Adjusted R²
+  * F-statistic and p-value
