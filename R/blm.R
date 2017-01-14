@@ -105,6 +105,7 @@ cof
 #'
 #' @return A vector with predicted response.
 #' @export
+
 predict <- function(obj, ...){
   mxy <- posterior(obj)$mu
   Sxy <- posterior(obj)$Sigma
@@ -118,9 +119,15 @@ predict <- function(obj, ...){
   }
     return(res)
 }
-pr<-predict(fit1)
-y
 
+
+x <- stats::rnorm(10, 10, 1)
+y<- stats::rnorm(10, x, 1)
+fit1<-blm(y~x,1,1)
+lmFit<-lm(y~x)
+x <- stats::rnorm(10, 5, 1)
+predict(fit1)
+stats::predict(lmFit)
 
 #' Get confidence intervals.
 #'
@@ -178,26 +185,18 @@ fitted <- function(obj){
   return(predict(obj))
 }
 
-
-fitted(fit1)
-
 #' Get residuals.
 #'
 #' Gets residuals of the fit; the difference between predicted and observed values of the response.
 #'
 #' @param obj   A blm object.
 #'
-#' @return A vector with residuals.
+#' @return A vector x <- stats::rnorm(10, 10, 1)
 #' @export
 residuals <- function(obj){
   return(obj$data[,1]-fitted(obj))
 }
 
-residuals(fit1)
-lmfit<-lm(y~x+z)
-lmfit$residuals
-lmfit$coefficients
-coefficients(fit1)
 
 
 
@@ -315,7 +314,6 @@ coefficients(fit1)
 n=length(fit1$data[,1])
 p=length(fit1$data)-1
 1-(sum(stats::residuals(lmFit)^2)/(n-p-1)/(sum((fit1$data[,1]-mean(fit1$data[,1]))^2)/(n-1)))
-
 summary(fit1)
 
 sqrt(stats::deviance(lmFit)/100)
