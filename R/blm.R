@@ -11,7 +11,19 @@
 #' @return A fitted model.
 #' @export
 blm <- function(model, alpha, beta, ...) {
-  # implement your function here...
+  if(!is.numeric(alpha)){
+    stop("Alpha must be a number.")
+  }
+  if(alpha<=0){
+    stop("Alpha must be greater than 0.")
+  }
+  if(!is.numeric(beta)){
+    stop("Beta must be a number.")
+  }
+  if(beta<=0){
+    stop("Alpha must be greater than 0.")
+  }
+
   prior <- make_prior(model, alpha)
   posterior <- update(model, prior, beta, ...)
 
@@ -44,9 +56,7 @@ distribution.default <- function(x) x
 #' @param ...     Additional data, for example a data frame.
 #'
 #' @return Posterior distribution as a list with mu and Sigma.
-#' @export
 update <- function(model, prior, beta, ...){
-
   prior <- distribution(prior)
   mf <- stats::model.frame(model, ...)
   phiX <- stats::model.matrix(model, ...)
@@ -64,7 +74,6 @@ update <- function(model, prior, beta, ...){
 #' @param ...     Additional data, for example a data frame.
 #'
 #' @return Prior distribution as a list with mu and Sigma..
-#' @export
 make_prior <- function(model, alpha, ...) {
   n <- ncol(stats::model.frame(model, ...))
   return(list(mu=rep(0,n),Sigma=diag(1/alpha, nrow = n)))
@@ -72,15 +81,6 @@ make_prior <- function(model, alpha, ...) {
 
 posterior <- function(fit) fit$posterior
 
-x <- stats::rnorm(100, 10, 5)
-z<- stats::rnorm(100, 5, 5)
-a <- 1
-b <- 2
-c<-3
-y <- a+b*x
-
-fit1 <- blm(y~x,1,1)
-fit1$posterior
 
 #' Get coefficients of blm model.
 #'
@@ -93,8 +93,7 @@ fit1$posterior
 coefficients<-function(obj){
   obj$coef[,1]
 }
-cof<-coefficients(fit1)
-cof
+
 
 #' Predict response.
 #'
@@ -105,7 +104,6 @@ cof
 #'
 #' @return A vector with predicted response.
 #' @export
-
 predict <- function(obj, ...){
   mxy <- posterior(obj)$mu
   Sxy <- posterior(obj)$Sigma
@@ -121,14 +119,6 @@ predict <- function(obj, ...){
 }
 
 
-x <- stats::rnorm(10, 10, 1)
-y<- stats::rnorm(10, x, 1)
-fit1<-blm(y~x,1,1)
-lmFit<-lm(y~x)
-x <- stats::rnorm(10, 5, 1)
-predict(fit1)
-stats::predict(lmFit)
-
 #' Get confidence intervals.
 #'
 #' Gets confidence intervals for coefficients from a fitted model.
@@ -141,17 +131,15 @@ stats::predict(lmFit)
 #' @export
 confint <- function(obj, parm, level=0.95){
   if(level>1){
-    warning("Confidence interval cannot be greater than 1.")
-    return()
+    stop("Confidence interval cannot be greater than 1.")
   }
   if(level<0){
-    warning("Confidence interval cannot be smaller than 0.")
-    return()
+    stop("Confidence interval cannot be smaller than 0.")
   }
 
     int <- c((1-level)/2, 1-(1-level)/2)
     if(missing(parm)){
-      n <- nrow(fit1$coef)
+      n <- nrow(obj$coef)
       r<-matrix(nrow=n, ncol = 2)
       for(i in seq_along(obj$coef)){
         r[i,1]<-stats::qnorm(int[1], obj$coef[i,1], obj$var[i,i])
@@ -185,6 +173,7 @@ fitted <- function(obj){
   return(predict(obj))
 }
 
+
 #' Get residuals.
 #'
 #' Gets residuals of the fit; the difference between predicted and observed values of the response.
@@ -198,9 +187,6 @@ residuals <- function(obj){
 }
 
 
-
-
-
 #' Get deviance.
 #'
 #' Gets the sum of squared distances from the predicted to observed response.
@@ -209,11 +195,10 @@ residuals <- function(obj){
 #'
 #' @return A deviance.
 #' @export
-
 deviance <- function(obj){
   return(sum(residuals(obj)^2))
 }
-deviance(fit1)
+
 
 #' Make a plot.
 #'
@@ -224,11 +209,13 @@ deviance(fit1)
 #' @return A plot.
 #' @export
 plot <- function(obj){
+  if(length(stats::model.frame(stats::delete.response(stats::terms(obj$formula))))!=1){
+    stop("Plot function works only with models with one explanatory variable.")
+  }
 graphics::plot.default(obj$data[,2],obj$data[,1], xlab="x", ylab="y")
 graphics::abline(obj$coef[1],obj$coef[2], col="red")
 }
 
-plot(fit1)
 
 #' Print blm object.
 #'
@@ -245,14 +232,6 @@ print.blm <- function(x, ...){
   cat("\nCoefficients:\n")
   print(coefficients(x))
 }
-
-x <- stats::rnorm(1000, 10, 1)
-y<- stats::rnorm(1000, x, 1)
-fit1<-blm(y~x,1,1)
-lmFit<-lm(y~x)
-
-print(fit1)
-print(lmFit)
 
 
 #' Summary of blm object.
@@ -291,37 +270,4 @@ summary.blm <- function(object, ...){
   Fstat <- MSM/MSE
   pval <- stats::pf(q=MSM/MSE, df1=p, df2=df,lower.tail = FALSE)
   cat("\nF-statistic:", Fstat, "on", p, "and", df, "DF, p-value: ", pval)
-
-
-
 }
-summary(lmFit)
-q<- stats::quantile(residuals.lm(lmFit))
-names(q)<- c("Min", "1Q", "Median", "3Q", "Max")
-q
-
-
-cof <-cbind(fit1$coef, confint(fit1))
-colnames(cof)<-c("Estimate", "Low 95% CI", "Upp 95% CI")
-
-names(stats::coefficients(lmFit))[1]
-stats::coefficients(lmFit)[1]
-names(stats::coefficients(lmFit))[2]
-stats::coefficients(lmFit)[2]
-?stderr()
-coefficients(fit1)
-
-n=length(fit1$data[,1])
-p=length(fit1$data)-1
-1-(sum(stats::residuals(lmFit)^2)/(n-p-1)/(sum((fit1$data[,1]-mean(fit1$data[,1]))^2)/(n-1)))
-summary(fit1)
-
-sqrt(stats::deviance(lmFit)/100)
-
-MSM<-sum((stats::fitted(lmFit)-mean(fit1$data[,1]))^2)
-MSE<-sum(stats::residuals(lmFit)^2)/998
-MSM/MSE
-stats::pf(q=MSM/MSE, df1=1, df2=998,lower.tail = FALSE)
-
-
-

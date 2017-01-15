@@ -15,6 +15,11 @@ test_that("testing blm objects", {
   expect_equal(cof[1], a, tolerance=0.1)
   expect_equal(cof[2], b, tolerance=0.1)
 
+  expect_error(blm(y~x,0,1))
+  expect_error(blm(y~x,1,0))
+  expect_error(blm(y~x,"notNumber",1))
+  expect_error(blm(y~x,1,"notNumber"))
+
 })
 
 test_that("testing coefficients", {
@@ -40,8 +45,9 @@ test_that("testing ploting function", {
   y <- a+b*x
 
   fit <- blm(y~x,1,1)
-  plot(fit1)
-
+  plot(fit)
+  fit2 <- blm(y~x+z,1,1)
+  expect_error(plot(fit2))
 })
 
 test_that("testing fitted", {
@@ -90,8 +96,8 @@ test_that("testing confint", {
   lmRes <- stats::confint(lmFit)
   expect_equal(colnames(blmRes), colnames(lmRes))
   expect_equal(rownames(blmRes), rownames(lmRes))
-  expect_warning(confint(fit1,level=2))
-  expect_warning(confint(fit1,level=-1))
+  expect_error(confint(fit1,level=2))
+  expect_error(confint(fit1,level=-1))
 
   blmRes <- confint(fit1, "x")
   lmRes <- stats::confint(lmFit,"x")
