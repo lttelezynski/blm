@@ -48,17 +48,17 @@ summary(fit)
     ## blm(formula, alpha, beta)
     ## 
     ## Residuals:
-    ##        Min         1Q     Median         3Q        Max 
-    ## -2.4962645 -0.8785048  0.1135928  0.6577995  2.5188096 
+    ##         Min          1Q      Median          3Q         Max 
+    ## -2.50735102 -0.69603928  0.04063394  0.52749774  2.72647467 
     ## 
     ## Coefficients:
     ##               Estimate Low 95% CI Upp 95% CI
-    ## (Intercept) -0.1752364  -1.244565  0.8940927
-    ## x            1.0171043   1.006451  1.0277579
+    ## (Intercept) -0.1055451  -1.181890  0.9707996
+    ## x            1.0219983   1.011036  1.0329605
     ## 
-    ## Residual standard error: 1.073213 on 98 degrees of freedom
-    ## R-squared: 0.4489373 ,   Adjusted R-squared:  0.4433142
-    ## F-statistic: 74.93927 on 1 and 98 DF, p-value:  9.876267e-14
+    ## Residual standard error: 1.030111 on 98 degrees of freedom
+    ## R-squared: 0.4589674 ,   Adjusted R-squared:  0.4534467
+    ## F-statistic: 79.15045 on 1 and 98 DF, p-value:  2.99397e-14
 
 or plot some data
 
